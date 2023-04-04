@@ -3,12 +3,6 @@ import { NextApiRequest } from "next";
 import { Server as ServerIO } from "socket.io";
 import { Server as NetServer } from "http";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export default async (req: NextApiRequest, res: any) => {
   if (!res.socket.server.io) {
     console.log("New Socket.io server...");
