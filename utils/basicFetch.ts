@@ -11,22 +11,5 @@ export const basicFetch = async (endpoint: string, method = "GET") => {
     },
   });
 
-  if (!response.ok) {
-    const error = {
-      status: response.status,
-      statusText: response.statusText,
-      message: "Failed to fetch data",
-    };
-
-    try {
-      const responseData = await response.json();
-      error.message = responseData.message || error.message;
-    } catch (e) {
-      console.error("Failed to parse response data as JSON", e);
-    }
-
-    throw error;
-  }
-
   return await response.json();
 };

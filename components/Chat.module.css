@@ -1,0 +1,125 @@
+@keyframes messageAnimation {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 0;
+  }
+}
+@keyframes myMessageAnimation {
+  0% {
+    right: -30%;
+  }
+  100% {
+    right: 0;
+  }
+}
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+.chat-container > ul {
+  padding-inline: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  flex: 1;
+  height: 100%;
+  padding-top: 1rem;
+}
+.chat-container > ul > li {
+  width: fit-content;
+  padding: 0.5rem 0.8rem;
+  border-radius: 24px;
+  margin-bottom: 0.4rem;
+  margin-right: auto;
+  background-color: var(--pale-gray);
+  position: relative;
+  animation: messageAnimation 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.info-box {
+  background-color: #f8f8fa;
+  border-bottom: 1px solid #b0b0b0;
+  padding: 0.5rem 1rem;
+  height: 13vh;
+  max-height: 130px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 12px;
+}
+.info-box > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.info-box img {
+  border-radius: 50%;
+  margin-bottom: 4px;
+}
+.me {
+  background-color: var(--blue) !important;
+  margin-left: auto !important;
+  margin-right: unset !important;
+  color: #fff;
+  animation: myMessageAnimation 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.input-box {
+  width: 100%;
+  padding-block: 0.5rem;
+  padding-inline: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+}
+.input-box > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--light-gray);
+  border-radius: 32px;
+  padding: 8px;
+  flex: 1;
+  background-color: #fbf9fa;
+}
+.input-box input {
+  width: 100%;
+  height: 100%;
+  padding-left: 0.5rem;
+}
+.input-box input::placeholder {
+  color: var(--second-gray);
+}
+.input-box button {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.input-box button svg {
+  color: var(--gray);
+  width: 80%;
+  height: 80%;
+}
+.input-box > div button {
+  background-color: var(--blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.15s linear;
+}
+.disabled {
+  background-color: var(--gray) !important;
+  pointer-events: none !important;
+}
+.input-box > div button svg {
+  color: #fff;
+}

@@ -1,0 +1,24 @@
+.news-box ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.news-box p {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.news-box ul li {
+  width: fit-content;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 14px;
+  border: 1px solid var(--gray);
+}
+.news-box ul li:hover {
+  background-color: var(--light-gray);
+  transition: 0.15s linear;
+}
+.news-box ul li a {
+  display: block;
+  width: 100%;
+}

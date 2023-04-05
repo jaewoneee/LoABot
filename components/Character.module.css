@@ -1,0 +1,26 @@
+.character-box img {
+  width: 200px;
+  border-radius: 1rem;
+}
+
+.character-box > button {
+  background-color: #fff;
+  border-radius: 1rem;
+  width: 100%;
+  padding-block: 0.2rem;
+}
+
+.link {
+  width: 100%;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 0.2rem;
+  font-size: 14px;
+  border: 1px solid var(--gray);
+}
+.link:hover {
+  background-color: var(--light-gray);
+  transition: 0.15s linear;
+}
