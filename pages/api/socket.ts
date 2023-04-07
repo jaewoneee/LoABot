@@ -10,8 +10,16 @@ export default async (req: NextApiRequest, res: any) => {
     const io = new ServerIO(httpServer, {
       path: "/api/socket",
     });
-    // append SocketIO server to Next.js socket server response
-    res.socket.server.io = io;
+
+    io.on("connection", (socket) => {
+      socket.on("send-message", (msg) => sendMessage(msg));
+      socket.on("character", (msg) => sendMessage(msg));
+      socket.on("chatroom", (msg) => sendMessage(msg));
+    });
+
+    const sendMessage = (msg: any) => {
+      io.emit("message", msg);
+    };
   }
   res.end();
 };

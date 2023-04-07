@@ -15,19 +15,14 @@ function Character({
 }) {
   const { socket, socketId } = useSocketStore();
 
-  const shareCharacterInfo = async () => {
+  const shareCharacterInfo = () => {
     const message = {
       id: socketId,
       data,
       shared: true,
     };
-    await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(message),
-    });
+
+    socket?.emit("character", message);
   };
 
   return (
@@ -43,13 +38,16 @@ function Character({
       </div>
       {!shared && <button onClick={shareCharacterInfo}>공유하기</button>}
       {shared && socketId !== id && (
-        <a
-          href={`https://iloa.gg/character/${data?.CharacterName}`}
-          className={styles.link}
-          target="_blank"
-        >
-          구경하기
-        </a>
+        <>
+          <a
+            href={`https://iloa.gg/character/${data?.CharacterName}`}
+            className={styles.link}
+            target="_blank"
+          >
+            구경하기
+          </a>
+          <button className={styles.link}>훈수두기</button>
+        </>
       )}
     </li>
   );

@@ -18,23 +18,15 @@ function Chat() {
   const [isOpened, setOpened] = useState(false);
   const chatList = useRef<HTMLUListElement | null>(null);
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (!isSearching && msg) {
       const message = {
         id: socketId,
         msg,
       };
-      // dispatch message to other users
-      const resp = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-      });
 
-      // reset field if OK
-      if (resp.ok) setMsg("");
+      socket?.emit("send-message", message);
+      setMsg("");
     } else {
       fetchCharacterInfo();
     }
@@ -98,9 +90,9 @@ function Chat() {
       )}
 
       <ul ref={chatList}>
-        <li>{socketId?.slice(0, 8)}님 안녕하세요!</li>
+        {socketId && <li>{socketId?.slice(0, 8)}님 안녕하세요!</li>}
         {chat.map((v, i) =>
-          v.msg ? (
+          v?.msg ? (
             <li
               key={`msg${i + 1}`}
               className={v.id === socketId ? styles.me : ""}
@@ -114,6 +106,8 @@ function Chat() {
               data={v.data}
               shared={v.shared || false}
             />
+          ) : v.data === null ? (
+            <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
           ) : v.news ? (
             <News data={v.news} />
           ) : null
