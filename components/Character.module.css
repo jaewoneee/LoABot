@@ -4,7 +4,6 @@
 }
 
 .character-box > button {
-  background-color: #fff;
   border-radius: 1rem;
   width: 100%;
   padding-block: 0.2rem;
@@ -19,6 +18,8 @@
   padding-block: 0.2rem;
   font-size: 14px;
   border: 1px solid var(--gray);
+  background-color: transparent;
+  margin-top: 0.3rem;
 }
 .link:hover {
   background-color: var(--light-gray);

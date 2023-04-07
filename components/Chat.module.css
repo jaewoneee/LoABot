@@ -46,7 +46,6 @@
   height: 13vh;
   max-height: 130px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   font-size: 12px;
 }
@@ -55,7 +54,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 0 auto;
 }
+.info-box > button svg {
+  color: var(--blue);
+}
+
 .info-box img {
   border-radius: 50%;
   margin-bottom: 4px;
@@ -122,4 +126,11 @@
 }
 .input-box > div button svg {
   color: #fff;
+}
+
+.notice {
+  margin: 0 auto !important;
+  background-color: transparent;
+  font-size: 12px !important;
+  padding-block: 4px !important;
 }

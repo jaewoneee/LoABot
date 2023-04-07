@@ -8,3 +8,10 @@ export type MessageType = {
   shared?: boolean;
   news?: EventType[] | NoticeType[];
 };
+
+export type PrivateRoomType = {
+  host: string;
+  guest: string;
+  chatRoom: string;
+  isConnected: boolean;
+};

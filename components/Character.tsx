@@ -3,6 +3,7 @@ import useSocketStore from "@/store/useSocket";
 import { CharacterProfileType } from "@/types/character";
 import styles from "./Character.module.css";
 import chat from "./Chat.module.css";
+import { useRouter } from "next/router";
 
 function Character({
   id,
@@ -13,6 +14,7 @@ function Character({
   data: CharacterProfileType | null;
   shared?: boolean;
 }) {
+  const router = useRouter();
   const { socket, socketId } = useSocketStore();
 
   const shareCharacterInfo = () => {
@@ -20,9 +22,22 @@ function Character({
       id: socketId,
       data,
       shared: true,
+      chatRoom: `room-${socketId!.slice(0, 4)}`,
     };
-
     socket?.emit("character", message);
+  };
+
+  const joinPrivateChatRoom = async (id: string) => {
+    const chatRoom = `room-${id.slice(0, 4)}`;
+    socket?.emit(
+      "chatroom",
+      {
+        host: id,
+        guest: socketId,
+        chatRoom,
+      },
+      () => router.push(`?id=${chatRoom}`)
+    );
   };
 
   return (
@@ -46,7 +61,12 @@ function Character({
           >
             구경하기
           </a>
-          <button className={styles.link}>훈수두기</button>
+          <button
+            className={styles.link}
+            onClick={() => joinPrivateChatRoom(id)}
+          >
+            훈수두기
+          </button>
         </>
       )}
     </li>

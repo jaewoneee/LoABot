@@ -4,18 +4,24 @@ import { PROFILE } from "@/config/constants";
 import Character from "./Character";
 import News from "./News";
 import Tool from "./Tool";
-import { MessageType } from "@/types";
+import { MessageType, PrivateRoomType } from "@/types";
 import styles from "./Chat.module.css";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { scrollToBottom } from "@/utils/scrollEvent";
 
 function Chat() {
+  const router = useRouter();
+  const { query } = router;
   const { socket, socketId } = useSocketStore();
   const [msg, setMsg] = useState<string>("");
-  const [isSearching, setSearching] = useState(false);
   const [chat, setChat] = useState<MessageType[]>([]);
+  const [isSearching, setSearching] = useState(false);
   const [isOpened, setOpened] = useState(false);
+  const [privateRoom, setPrivateRoom] = useState<PrivateRoomType | null>(null);
   const chatList = useRef<HTMLUListElement | null>(null);
 
   const sendMessage = () => {
@@ -27,6 +33,9 @@ function Chat() {
 
       socket?.emit("send-message", message);
       setMsg("");
+    } else if (privateRoom) {
+      const privateMsg = { ...privateRoom, msg };
+      socket?.emit("private-message", privateMsg);
     } else {
       fetchCharacterInfo();
     }
@@ -48,6 +57,10 @@ function Chat() {
     setMsg(value);
   };
 
+  const leaveChatRoom = () => {
+    router.push("/");
+  };
+
   useEffect(() => {
     // event listener
     socket?.on("message", (message) => {
@@ -55,8 +68,15 @@ function Chat() {
         return [...state, message];
       });
     });
+
+    socket?.on("private", (data: PrivateRoomType) => {
+      setPrivateRoom(data);
+      console.log("listened");
+      router.push(`?id=${data?.chatRoom}`);
+    });
   }, [socket]);
 
+  console.log(privateRoom);
   useEffect(() => {
     if (isSearching) {
       setChat((state) => {
@@ -67,16 +87,18 @@ function Chat() {
   }, [isSearching]);
 
   useEffect(() => {
-    console.log("list--=-====>", chat);
-
-    const { scrollHeight } = chatList?.current as HTMLUListElement;
-    (chatList.current as HTMLUListElement).scrollTo(0, scrollHeight + 300);
+    scrollToBottom(chatList);
   }, [chat]);
 
   return (
     <div className={styles["chat-container"]}>
       {socketId && (
         <div className={styles["info-box"]}>
+          {"id" in query && (
+            <button aria-label="채팅방 나가기" onClick={leaveChatRoom}>
+              <ArrowBackIosRoundedIcon />
+            </button>
+          )}
           <div>
             <Image
               src="/profile.jpg"
@@ -89,30 +111,39 @@ function Chat() {
         </div>
       )}
 
-      <ul ref={chatList}>
-        {socketId && <li>{socketId?.slice(0, 8)}님 안녕하세요!</li>}
-        {chat.map((v, i) =>
-          v?.msg ? (
-            <li
-              key={`msg${i + 1}`}
-              className={v.id === socketId ? styles.me : ""}
-            >
-              {v.msg}
-            </li>
-          ) : v.data ? (
-            <Character
-              id={v.id as string}
-              key={`character${i + 1}`}
-              data={v.data}
-              shared={v.shared || false}
-            />
-          ) : v.data === null ? (
-            <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
-          ) : v.news ? (
-            <News data={v.news} />
-          ) : null
-        )}
-      </ul>
+      {JSON.stringify(query) === "{}" && (
+        <ul ref={chatList}>
+          {socketId && <li>{socketId?.slice(0, 8)}님 안녕하세요!</li>}
+          {chat.map((v, i) =>
+            v?.msg ? (
+              <li
+                key={`msg${i + 1}`}
+                className={v.id === socketId ? styles.me : ""}
+              >
+                {v.msg}
+              </li>
+            ) : v.data ? (
+              <Character
+                id={v.id as string}
+                key={`character${i + 1}`}
+                data={v.data}
+                shared={v.shared || false}
+              />
+            ) : v.data === null ? (
+              <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
+            ) : v.news ? (
+              <News data={v.news} />
+            ) : null
+          )}
+        </ul>
+      )}
+      {"id" in query && (
+        <ul ref={chatList}>
+          {socketId && (
+            <li className={styles.notice}>일대일 대화가 시작되었습니다.</li>
+          )}
+        </ul>
+      )}
       {isOpened && (
         <Tool props={{ isSearching, setSearching, setChat, setOpened }} />
       )}
