@@ -12,20 +12,24 @@ import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { scrollToBottom } from "@/utils/scrollEvent";
+export interface PrivateMessage extends PrivateRoomType {
+  msg: string;
+}
 
 function Chat() {
   const router = useRouter();
   const { query } = router;
-  const { socket, socketId } = useSocketStore();
+  const { socket, socketId, disconnect } = useSocketStore();
   const [msg, setMsg] = useState<string>("");
   const [chat, setChat] = useState<MessageType[]>([]);
+  const [privateChat, setPrivateChat] = useState<PrivateMessage[]>([]);
   const [isSearching, setSearching] = useState(false);
   const [isOpened, setOpened] = useState(false);
   const [privateRoom, setPrivateRoom] = useState<PrivateRoomType | null>(null);
-  const chatList = useRef<HTMLUListElement | null>(null);
+  const bottom = useRef<HTMLDivElement>(null);
 
   const sendMessage = () => {
-    if (!isSearching && msg) {
+    if (!isSearching && !privateRoom && msg) {
       const message = {
         id: socketId,
         msg,
@@ -34,6 +38,7 @@ function Chat() {
       socket?.emit("send-message", message);
       setMsg("");
     } else if (privateRoom) {
+      console.log("private=====>", privateRoom);
       const privateMsg = { ...privateRoom, msg };
       socket?.emit("private-message", privateMsg);
     } else {
@@ -74,9 +79,15 @@ function Chat() {
       console.log("listened");
       router.push(`?id=${data?.chatRoom}`);
     });
+
+    socket?.on("receive-private-message", (data: PrivateMessage) => {
+      console.log("received====>", data);
+      setPrivateChat((state) => {
+        return [...state, data];
+      });
+    });
   }, [socket]);
 
-  console.log(privateRoom);
   useEffect(() => {
     if (isSearching) {
       setChat((state) => {
@@ -87,8 +98,8 @@ function Chat() {
   }, [isSearching]);
 
   useEffect(() => {
-    scrollToBottom(chatList);
-  }, [chat]);
+    scrollToBottom(bottom);
+  }, [chat, privateChat]);
 
   return (
     <div className={styles["chat-container"]}>
@@ -110,40 +121,77 @@ function Chat() {
           </div>
         </div>
       )}
-
-      {JSON.stringify(query) === "{}" && (
-        <ul ref={chatList}>
-          {socketId && <li>{socketId?.slice(0, 8)}님 안녕하세요!</li>}
-          {chat.map((v, i) =>
-            v?.msg ? (
+      <div className={styles.container}>
+        {JSON.stringify(query) === "{}" && (
+          <ul>
+            {socketId && (
+              <li className={styles.notice}>
+                {socketId?.slice(0, 8)}님 안녕하세요!
+              </li>
+            )}
+            {chat.map((v, i) =>
+              v?.msg ? (
+                <li
+                  key={`msg${i + 1}`}
+                  className={v.id === socketId ? styles.me : ""}
+                >
+                  {v.id !== socketId && chat[i - 1]?.id !== v?.id && (
+                    <p className={styles.name}>{v.id?.slice(0, 8)}</p>
+                  )}
+                  <div
+                    className={
+                      v.id === socketId
+                        ? `${styles.bubble} ${styles.me}`
+                        : styles.bubble
+                    }
+                  >
+                    {v.msg}
+                  </div>
+                </li>
+              ) : v.data ? (
+                <Character
+                  id={v.id as string}
+                  key={`character${i + 1}`}
+                  data={v.data}
+                  shared={v.shared || false}
+                />
+              ) : v.data === null ? (
+                <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
+              ) : v.news ? (
+                <News data={v.news} />
+              ) : null
+            )}
+          </ul>
+        )}
+        {"id" in query && (
+          <ul>
+            {socketId && (
+              <li className={styles.notice}>
+                {privateRoom?.host.slice(0, 8)}님과의 일대일 대화가
+                시작되었습니다.
+              </li>
+            )}
+            {privateChat.map((v, i) => (
               <li
                 key={`msg${i + 1}`}
-                className={v.id === socketId ? styles.me : ""}
+                className={v.host === socketId ? styles.me : ""}
               >
-                {v.msg}
+                <div
+                  className={
+                    v.host === socketId
+                      ? `${styles.bubble} ${styles.me}`
+                      : styles.bubble
+                  }
+                >
+                  {v.msg}
+                </div>
               </li>
-            ) : v.data ? (
-              <Character
-                id={v.id as string}
-                key={`character${i + 1}`}
-                data={v.data}
-                shared={v.shared || false}
-              />
-            ) : v.data === null ? (
-              <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
-            ) : v.news ? (
-              <News data={v.news} />
-            ) : null
-          )}
-        </ul>
-      )}
-      {"id" in query && (
-        <ul ref={chatList}>
-          {socketId && (
-            <li className={styles.notice}>일대일 대화가 시작되었습니다.</li>
-          )}
-        </ul>
-      )}
+            ))}
+          </ul>
+        )}
+        <div ref={bottom}></div>
+      </div>
+
       {isOpened && (
         <Tool props={{ isSearching, setSearching, setChat, setOpened }} />
       )}

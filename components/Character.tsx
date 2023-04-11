@@ -42,33 +42,38 @@ function Character({
 
   return (
     <li className={`${styles["character-box"]} ${socketId === id && chat.me}`}>
-      {data?.CharacterImage && (
-        <img src={data.CharacterImage} alt="character-image" />
-      )}
-      <div>
-        <p>
-          {data?.ServerName} {data?.CharacterClassName}
-        </p>
-        <p>{data?.CharacterName}</p>
+      {id !== socketId && <p className={chat.name}>{id?.slice(0, 8)}</p>}
+      <div
+        className={id === socketId ? `${chat.bubble} ${chat.me}` : chat.bubble}
+      >
+        {data?.CharacterImage && (
+          <img src={data.CharacterImage} alt="character-image" />
+        )}
+        <div>
+          <p>
+            {data?.ServerName} {data?.CharacterClassName}
+          </p>
+          <p>{data?.CharacterName}</p>
+        </div>
+        {!shared && <button onClick={shareCharacterInfo}>공유하기</button>}
+        {shared && socketId !== id && (
+          <>
+            <a
+              href={`https://iloa.gg/character/${data?.CharacterName}`}
+              className={styles.link}
+              target="_blank"
+            >
+              구경하기
+            </a>
+            <button
+              className={styles.link}
+              onClick={() => joinPrivateChatRoom(id)}
+            >
+              훈수두기
+            </button>
+          </>
+        )}
       </div>
-      {!shared && <button onClick={shareCharacterInfo}>공유하기</button>}
-      {shared && socketId !== id && (
-        <>
-          <a
-            href={`https://iloa.gg/character/${data?.CharacterName}`}
-            className={styles.link}
-            target="_blank"
-          >
-            구경하기
-          </a>
-          <button
-            className={styles.link}
-            onClick={() => joinPrivateChatRoom(id)}
-          >
-            훈수두기
-          </button>
-        </>
-      )}
     </li>
   );
 }
