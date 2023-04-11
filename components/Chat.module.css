@@ -62,24 +62,6 @@
   margin-bottom: 4px;
 }
 
-.name {
-  font-size: 12px;
-  margin-bottom: 4px;
-}
-.bubble {
-  width: fit-content;
-  padding: 0.5rem 0.8rem;
-  border-radius: 24px;
-  background-color: var(--pale-gray);
-  position: relative;
-}
-.me {
-  background-color: var(--blue) !important;
-  margin-left: auto !important;
-  margin-right: unset !important;
-  color: #fff;
-  animation: myMessageAnimation 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
-}
 .input-box {
   width: 100%;
   padding-block: 0.5rem;

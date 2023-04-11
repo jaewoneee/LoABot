@@ -1,11 +1,11 @@
-import { EVENT, NOTICE } from "@/config/constants";
-import { MessageType } from "@/types";
-import { Dispatch, SetStateAction } from "react";
 import styles from "./Tool.module.css";
+import { EVENT, NOTICE } from "@/config/constants";
+import { Dispatch, SetStateAction } from "react";
 import GradeRoundedIcon from "@mui/icons-material/GradeRounded";
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import useChatStore from "@/store/useChat";
 
 function Tool({
   props,
@@ -13,19 +13,18 @@ function Tool({
   props: {
     isSearching: boolean;
     setSearching: Dispatch<SetStateAction<boolean>>;
-    setChat: Dispatch<SetStateAction<MessageType[]>>;
     setOpened: Dispatch<SetStateAction<boolean>>;
   };
 }) {
-  const { isSearching, setSearching, setChat, setOpened } = props;
+  const { setChatList } = useChatStore();
+  const { isSearching, setSearching, setOpened } = props;
+
   const fetchNewsList = async (type: string) => {
     const url = `/api/loa/news?type=${type}`;
 
     try {
       const news = await fetch(url).then((res) => res.json());
-      setChat((state) => {
-        return [...state, { news }];
-      });
+      setChatList({ news });
     } catch (error) {
       console.error(error);
     }

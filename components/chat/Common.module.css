@@ -1,0 +1,43 @@
+@keyframes messageAnimation {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 0;
+  }
+}
+@keyframes myMessageAnimation {
+  0% {
+    right: -30%;
+  }
+  100% {
+    right: 0;
+  }
+}
+
+.name {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.bubble {
+  width: fit-content;
+  padding: 0.5rem 0.8rem;
+  border-radius: 24px;
+  background-color: var(--pale-gray);
+  position: relative;
+}
+.me {
+  background-color: var(--blue) !important;
+  margin-left: auto !important;
+  margin-right: unset !important;
+  color: #fff;
+  animation: myMessageAnimation 0.2s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+.notice {
+  margin: 0 auto 1rem auto !important;
+  background-color: transparent;
+  font-size: 12px !important;
+  padding-block: 4px !important;
+  background-color: var(--pale-gray);
+  padding-inline: 12px;
+}
