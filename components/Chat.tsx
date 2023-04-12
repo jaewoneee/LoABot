@@ -19,8 +19,14 @@ function Chat() {
   const { query } = router;
   const { socket, socketId, disconnect } = useSocketStore();
   const [msg, setMsg] = useState<string>("");
-  const { chat, privateChat, privateRoom, setPrivateRoom, setChatList } =
-    useChatStore();
+  const {
+    chat,
+    privateChat,
+    privateRoom,
+    setPrivateRoom,
+    setChatList,
+    resetPrivateChat,
+  } = useChatStore();
   const [isSearching, setSearching] = useState(false);
   const [isOpened, setOpened] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
@@ -36,7 +42,6 @@ function Chat() {
     } else if (privateRoom) {
       const privateMsg = { ...privateRoom, msg, sender: socketId };
       socket?.emit("private-message", privateMsg);
-      console.log("isit?", privateRoom);
     } else {
       fetchCharacterInfo();
     }
@@ -65,8 +70,9 @@ function Chat() {
 
   const leaveChatRoom = () => {
     router.push("/");
-    socket?.emit("exit", privateRoom);
+    socket?.emit("exit", privateRoom, socketId);
     setPrivateRoom(null);
+    resetPrivateChat();
   };
 
   useEffect(() => {
@@ -85,8 +91,12 @@ function Chat() {
       console.log("received====>", data);
       setChatList(data);
     });
-  }, [socket]);
 
+    socket?.on("leave-message", (data) => {
+      setChatList(data);
+    });
+  }, [socket]);
+  console.log(privateChat);
   useEffect(() => {
     if (isSearching) {
       setChatList({ id: socketId as string });

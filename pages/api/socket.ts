@@ -29,8 +29,10 @@ export default async (req: NextApiRequest, res: any) => {
         const { chatRoom } = data;
         io.to(chatRoom).emit("receive-private-message", data);
       });
-      socket.on("exit", (data: PrivateRoomType) => {
+      socket.on("exit", (data: PrivateRoomType, id: string) => {
+        const { chatRoom } = data;
         socket.leave(data.chatRoom);
+        io.to(chatRoom).emit("leave-message", { ...data, leave: id });
       });
     });
 

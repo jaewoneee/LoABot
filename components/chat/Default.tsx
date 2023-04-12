@@ -8,7 +8,6 @@ function Default() {
   const { socketId } = useSocketStore();
   const { chat } = useChatStore();
 
-  console.log(chat);
   return (
     <ul>
       {socketId && (

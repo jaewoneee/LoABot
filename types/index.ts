@@ -17,6 +17,7 @@ export type PrivateRoomType = {
 };
 
 export interface PrivateMessage extends PrivateRoomType {
-  msg: string;
-  sender: string;
+  msg?: string;
+  sender?: string;
+  leave?: string;
 }

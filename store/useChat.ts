@@ -7,6 +7,7 @@ interface ChatStoreInterface {
   privateRoom: PrivateRoomType | null;
   setPrivateRoom: (room: PrivateRoomType | null) => void;
   setChatList: (newChat: MessageType | PrivateMessage) => void;
+  resetPrivateChat: () => void;
 }
 
 const useChatStore = create<ChatStoreInterface>((set, get) => ({
@@ -21,6 +22,7 @@ const useChatStore = create<ChatStoreInterface>((set, get) => ({
       set({ privateChat: [...get().privateChat, newChat] });
     }
   },
+  resetPrivateChat: () => set({ privateChat: [] }),
 }));
 
 export default useChatStore;
