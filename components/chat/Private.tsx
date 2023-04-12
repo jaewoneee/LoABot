@@ -5,6 +5,7 @@ import styles from "./Common.module.css";
 function Private() {
   const { socketId } = useSocketStore();
   const { privateRoom, privateChat } = useChatStore();
+
   return (
     <ul>
       {socketId && (
@@ -15,16 +16,17 @@ function Private() {
       {privateChat.map((v, i) => (
         <li
           key={`msg${i + 1}`}
-          className={v.host === socketId ? styles.me : ""}
+          className={v.sender === socketId ? styles.me : ""}
         >
           <div
             className={
-              v.host === socketId
+              v.sender === socketId
                 ? `${styles.bubble} ${styles.me}`
                 : styles.bubble
             }
           >
             {v.msg}
+            {v.host}/{socketId}
           </div>
         </li>
       ))}

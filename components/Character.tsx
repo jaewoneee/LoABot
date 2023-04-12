@@ -2,7 +2,7 @@
 import useSocketStore from "@/store/useSocket";
 import { CharacterProfileType } from "@/types/character";
 import styles from "./Character.module.css";
-import chat from "./Chat.module.css";
+import chat from "./chat/Common.module.css";
 import { useRouter } from "next/router";
 
 function Character({
@@ -35,6 +35,7 @@ function Character({
         host: id,
         guest: socketId,
         chatRoom,
+        isConnected: true,
       },
       () => router.push(`?id=${chatRoom}`)
     );

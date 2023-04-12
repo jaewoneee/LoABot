@@ -15,3 +15,8 @@ export type PrivateRoomType = {
   chatRoom: string;
   isConnected: boolean;
 };
+
+export interface PrivateMessage extends PrivateRoomType {
+  msg: string;
+  sender: string;
+}

@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import useSocketStore from "@/store/useSocket";
 import { PROFILE } from "@/config/constants";
 import Tool from "./Tool";
-import { PrivateRoomType } from "@/types";
+import { PrivateMessage, PrivateRoomType } from "@/types";
 import styles from "./Chat.module.css";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -13,9 +13,6 @@ import { scrollToBottom } from "@/utils/scrollEvent";
 import useChatStore from "@/store/useChat";
 import Default from "./chat/Default";
 import Private from "./chat/Private";
-export interface PrivateMessage extends PrivateRoomType {
-  msg: string;
-}
 
 function Chat() {
   const router = useRouter();
@@ -34,21 +31,27 @@ function Chat() {
         id: socketId,
         msg,
       };
-
       socket?.emit("send-message", message);
       setMsg("");
     } else if (privateRoom) {
-      console.log("private=====>", privateRoom);
-      const privateMsg = { ...privateRoom, msg };
+      const privateMsg = { ...privateRoom, msg, sender: socketId };
       socket?.emit("private-message", privateMsg);
+      console.log("isit?", privateRoom);
     } else {
       fetchCharacterInfo();
     }
+    setMsg("");
   };
 
   const fetchCharacterInfo = async (type = PROFILE) => {
     const url = `/api/loa/character?name=${msg}&type=${type}`;
-    const data = await fetch(url).then((res) => res.json());
+    const data = await fetch(url).then((res) => {
+      if (!res.ok) {
+        console.log("error!");
+      } else {
+        return res.json();
+      }
+    });
 
     setSearching(false);
     setOpened(false);
@@ -62,6 +65,8 @@ function Chat() {
 
   const leaveChatRoom = () => {
     router.push("/");
+    socket?.emit("exit", privateRoom);
+    setPrivateRoom(null);
   };
 
   useEffect(() => {

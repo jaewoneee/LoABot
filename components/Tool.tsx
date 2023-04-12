@@ -21,13 +21,9 @@ function Tool({
 
   const fetchNewsList = async (type: string) => {
     const url = `/api/loa/news?type=${type}`;
+    const news = await fetch(url).then((res) => res.json());
 
-    try {
-      const news = await fetch(url).then((res) => res.json());
-      setChatList({ news });
-    } catch (error) {
-      console.error(error);
-    }
+    setChatList({ news });
     setOpened(false);
   };
 

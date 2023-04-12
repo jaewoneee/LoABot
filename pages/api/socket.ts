@@ -1,12 +1,8 @@
-import { PrivateRoomType } from "@/types/index";
 /* eslint-disable import/no-anonymous-default-export */
+import { PrivateMessage, PrivateRoomType } from "@/types/index";
 import { NextApiRequest } from "next";
 import { Server as ServerIO } from "socket.io";
 import { Server as NetServer } from "http";
-
-interface PrivateMessage extends PrivateRoomType {
-  msg: string;
-}
 
 export default async (req: NextApiRequest, res: any) => {
   if (!res.socket.server.io) {
@@ -17,7 +13,9 @@ export default async (req: NextApiRequest, res: any) => {
     });
 
     io.on("connection", (socket) => {
-      socket.on("send-message", (msg) => sendMessage(msg));
+      socket.on("send-message", (msg) => {
+        sendMessage(msg);
+      });
       socket.on("character", (msg) => {
         sendMessage(msg);
         socket.join(msg?.chatRoom);
@@ -30,6 +28,9 @@ export default async (req: NextApiRequest, res: any) => {
       socket.on("private-message", (data: PrivateMessage) => {
         const { chatRoom } = data;
         io.to(chatRoom).emit("receive-private-message", data);
+      });
+      socket.on("exit", (data: PrivateRoomType) => {
+        socket.leave(data.chatRoom);
       });
     });
 
