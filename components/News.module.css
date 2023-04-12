@@ -1,3 +1,7 @@
+.news-box div {
+  background-color: var(--light-green) !important;
+}
+
 .news-box ul {
   display: flex;
   flex-direction: column;
@@ -15,8 +19,9 @@
   border: 1px solid var(--gray);
 }
 .news-box ul li:hover {
-  background-color: var(--light-gray);
+  background-color: var(--green);
   transition: 0.15s linear;
+  border-color: transparent;
 }
 .news-box ul li a {
   display: block;

@@ -10,7 +10,10 @@ function Private() {
     <ul>
       {socketId && (
         <li className={styles.notice}>
-          {privateRoom?.host.slice(0, 8)}님과의 일대일 대화가 시작되었습니다.
+          {privateRoom?.guest === socketId
+            ? privateRoom?.host.slice(0, 8)
+            : privateRoom?.guest.slice(0, 8)}
+          님과의 일대일 대화가 시작되었습니다.
         </li>
       )}
       {privateChat.map((v, i) =>

@@ -3,12 +3,17 @@
   border-radius: 1rem;
 }
 
-.character-box > button {
+.character-box > div > button {
   border-radius: 1rem;
   width: 100%;
   padding-block: 0.2rem;
+  background-color: var(--light-green);
+  margin-top: 4px;
 }
-
+.character-box > div > button:hover {
+  background-color: rgb(128, 236, 128);
+  transition: 0.15s linear;
+}
 .link {
   width: 100%;
   border-radius: 1rem;
@@ -18,10 +23,37 @@
   padding-block: 0.2rem;
   font-size: 14px;
   border: 1px solid var(--gray);
-  background-color: transparent;
+  background-color: transparent !important;
   margin-top: 0.3rem;
 }
 .link:hover {
-  background-color: var(--light-gray);
+  background-color: var(--light-gray) !important;
   transition: 0.15s linear;
+}
+
+.topper {
+  font-size: 14px;
+  margin-top: 4px;
+}
+.topper p:last-child {
+  font-size: 1rem;
+  font-weight: 700;
+  padding-block: 4px;
+}
+.bottom {
+  margin-bottom: 0.5rem;
+}
+.bottom span {
+  font-size: 14px;
+  font-weight: 400;
+}
+.bottom p {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.disabled {
+  pointer-events: none;
+  background-color: var(--pale-gray) !important;
+  opacity: 0.8;
 }

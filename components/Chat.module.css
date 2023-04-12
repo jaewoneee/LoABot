@@ -54,7 +54,7 @@
   margin: 0 auto;
 }
 .info-box > button svg {
-  color: var(--blue);
+  color: var(--green);
 }
 
 .info-box img {
@@ -104,7 +104,7 @@
   height: 80%;
 }
 .input-box > div button {
-  background-color: var(--blue);
+  background-color: var(--green);
   border-radius: 50%;
   display: flex;
   align-items: center;

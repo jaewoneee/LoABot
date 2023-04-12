@@ -40,7 +40,11 @@ function Default() {
             shared={v.shared || false}
           />
         ) : v.data === null ? (
-          <li className={styles.me}>존재하지 않는 유저 정보입니다.</li>
+          <li className={styles.me}>
+            <div className={`${styles.bubble} ${styles.me}`}>
+              존재하지 않는 유저 정보입니다.
+            </div>
+          </li>
         ) : v.news ? (
           <News data={v.news} />
         ) : null

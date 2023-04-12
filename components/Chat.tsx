@@ -17,7 +17,7 @@ import Private from "./chat/Private";
 function Chat() {
   const router = useRouter();
   const { query } = router;
-  const { socket, socketId, disconnect } = useSocketStore();
+  const { socket, socketId } = useSocketStore();
   const [msg, setMsg] = useState<string>("");
   const {
     chat,
@@ -38,7 +38,6 @@ function Chat() {
         msg,
       };
       socket?.emit("send-message", message);
-      setMsg("");
     } else if (privateRoom) {
       const privateMsg = { ...privateRoom, msg, sender: socketId };
       socket?.emit("private-message", privateMsg);
@@ -69,7 +68,7 @@ function Chat() {
   };
 
   const leaveChatRoom = () => {
-    router.push("/");
+    router.replace("/");
     socket?.emit("exit", privateRoom, socketId);
     setPrivateRoom(null);
     resetPrivateChat();
@@ -83,12 +82,10 @@ function Chat() {
 
     socket?.on("private", (data: PrivateRoomType) => {
       setPrivateRoom(data);
-      console.log("listened");
       router.push(`?id=${data?.chatRoom}`);
     });
 
     socket?.on("receive-private-message", (data: PrivateMessage) => {
-      console.log("received====>", data);
       setChatList(data);
     });
 
@@ -96,7 +93,7 @@ function Chat() {
       setChatList(data);
     });
   }, [socket]);
-  console.log(privateChat);
+
   useEffect(() => {
     if (isSearching) {
       setChatList({ id: socketId as string });
@@ -105,7 +102,13 @@ function Chat() {
   }, [isSearching]);
 
   useEffect(() => {
-    scrollToBottom(bottom);
+    const timer = setTimeout(() => {
+      scrollToBottom(bottom);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [chat, privateChat]);
 
   return (
@@ -119,7 +122,7 @@ function Chat() {
           )}
           <div>
             <Image
-              src="/profile.jpg"
+              src="/profile.png"
               width={50}
               height={50}
               alt="profile-image"
@@ -133,15 +136,26 @@ function Chat() {
         <div ref={bottom}></div>
       </div>
 
-      {isOpened && <Tool props={{ isSearching, setSearching, setOpened }} />}
+      {"id" in query === false && isOpened && (
+        <Tool
+          props={{
+            isSearching,
+            setSearching,
+            setOpened,
+          }}
+        />
+      )}
 
       <div className={styles["input-box"]}>
-        <button
-          onClick={() => setOpened((state) => !state)}
-          aria-label="open tool box"
-        >
-          <AddRoundedIcon />
-        </button>
+        {"id" in query === false && (
+          <button
+            onClick={() => setOpened((state) => !state)}
+            aria-label="open tool box"
+          >
+            <AddRoundedIcon />
+          </button>
+        )}
+
         <div>
           <input
             type="text"
