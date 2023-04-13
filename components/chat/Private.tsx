@@ -10,16 +10,16 @@ function Private() {
     <ul>
       {socketId && (
         <li className={styles.notice}>
-          {privateRoom?.guest === socketId
-            ? privateRoom?.host.slice(0, 8)
-            : privateRoom?.guest.slice(0, 8)}
+          {privateRoom?.guest.id === socketId
+            ? privateRoom?.host.nickname
+            : privateRoom?.guest.nickname}
           님과의 일대일 대화가 시작되었습니다.
         </li>
       )}
       {privateChat.map((v, i) =>
         v.leave ? (
           <li key={`msg${i + 1}`} className={styles.notice}>
-            {`${v.leave.slice(0, 8)}님이 퇴장하셨습니다.`}
+            {`${v.leave.nickname}님이 퇴장하셨습니다.`}
           </li>
         ) : (
           <li

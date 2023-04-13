@@ -38,7 +38,7 @@ function Chat() {
 
   const leaveChatRoom = () => {
     router.replace("/");
-    socket?.emit("exit-chatroom", privateRoom, socketId);
+    socket?.emit("exit-chatroom", privateRoom, { id: socketId, nickname });
     setPrivateRoom(null);
     resetPrivateChat();
   };

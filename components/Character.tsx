@@ -5,23 +5,26 @@ import styles from "./Character.module.css";
 import chat from "./chat/Common.module.css";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import useChatStore from "@/store/useChat";
 
 function Character({
-  id,
+  host,
   data,
   shared,
 }: {
-  id: string;
+  host: { id: string; nickname: string };
   data: CharacterProfileType | null;
   shared?: boolean;
 }) {
   const router = useRouter();
+  const { nickname } = useChatStore();
   const { socket, socketId } = useSocketStore();
   const [isShared, setShared] = useState(false);
 
   const shareCharacterInfo = () => {
     const message = {
-      id: socketId,
+      id: host.id,
+      nickname: host.nickname,
       data,
       shared: true,
       chatRoom: `room-${socketId!.slice(0, 4)}`,
@@ -30,13 +33,13 @@ function Character({
     setShared(true);
   };
 
-  const joinPrivateChatRoom = async (id: string) => {
-    const chatRoom = `room-${id.slice(0, 4)}`;
+  const joinPrivateChatRoom = async () => {
+    const chatRoom = `room-${host.id.slice(0, 4)}`;
     socket?.emit(
       "enter-chatroom",
       {
-        host: id,
-        guest: socketId,
+        host,
+        guest: { id: socketId, nickname },
         chatRoom,
         isConnected: true,
       },
@@ -46,14 +49,16 @@ function Character({
 
   return (
     <>
-      {shared && id === socketId ? null : (
+      {shared && host.id === socketId ? null : (
         <li
-          className={`${styles["character-box"]} ${socketId === id && chat.me}`}
+          className={`${styles["character-box"]} ${
+            socketId === host.id && chat.me
+          }`}
         >
-          {id !== socketId && <p className={chat.name}>{id?.slice(0, 8)}</p>}
+          {host.id !== socketId && <p className={chat.name}>{nickname}</p>}
           <div
             className={
-              id === socketId ? `${chat.bubble} ${chat.me}` : chat.bubble
+              host.id === socketId ? `${chat.bubble} ${chat.me}` : chat.bubble
             }
           >
             {data?.CharacterImage && (
@@ -83,7 +88,7 @@ function Character({
               </div>
             </div>
 
-            {id === socketId && (
+            {host.id === socketId && (
               <button
                 onClick={shareCharacterInfo}
                 className={isShared ? styles.disabled : ""}
@@ -91,7 +96,7 @@ function Character({
                 {isShared ? "공유완료" : "공유하기"}
               </button>
             )}
-            {shared && socketId !== id && (
+            {shared && socketId !== host.id && (
               <>
                 <a
                   href={`https://iloa.gg/character/${data?.CharacterName}`}
@@ -102,7 +107,7 @@ function Character({
                 </a>
                 <button
                   className={styles.link}
-                  onClick={() => joinPrivateChatRoom(id)}
+                  onClick={() => joinPrivateChatRoom()}
                 >
                   훈수두기
                 </button>

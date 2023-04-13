@@ -30,7 +30,8 @@ function InputBox({ props }: { props: InputBoxInterface }) {
   const sendMessage = () => {
     if (!isSearching && !privateRoom && msg) {
       const message = {
-        id: nickname,
+        id: socketId,
+        nickname,
         msg,
       };
       socket?.emit("send-message", message);
@@ -55,7 +56,7 @@ function InputBox({ props }: { props: InputBoxInterface }) {
 
     setSearching(false);
     setToolOpened(false);
-    setChatList({ id: socketId as string, data });
+    setChatList({ id: socketId as string, nickname, data });
   };
   return (
     <div className={styles["input-box"]}>

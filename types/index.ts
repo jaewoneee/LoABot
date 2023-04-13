@@ -4,14 +4,15 @@ import { EventType, NoticeType } from "./news";
 export type MessageType = {
   id?: string;
   msg?: string;
+  nickname?: string;
   data?: CharacterProfileType;
   shared?: boolean;
   news?: EventType[] | NoticeType[];
 };
 
 export type PrivateRoomType = {
-  host: string;
-  guest: string;
+  host: { id: string; nickname: string };
+  guest: { id: string; nickname: string };
   chatRoom: string;
   isConnected: boolean;
 };
@@ -19,5 +20,5 @@ export type PrivateRoomType = {
 export interface PrivateMessage extends PrivateRoomType {
   msg?: string;
   sender?: string;
-  leave?: string;
+  leave?: { id: string; nickname: string };
 }

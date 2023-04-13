@@ -7,10 +7,10 @@ import useChatStore from "@/store/useChat";
 function Default() {
   const { socketId } = useSocketStore();
   const { chat, nickname } = useChatStore();
-
+  console.log("list====>", chat);
   return (
     <ul>
-      {socketId && <li className={styles.notice}>{nickname}님 안녕하세요!</li>}
+      {socketId && <li className={styles.notice}>{nickname} 님 안녕하세요!</li>}
       {chat.map((v, i) =>
         v?.msg ? (
           <li
@@ -18,7 +18,7 @@ function Default() {
             className={v.id === socketId ? styles.me : ""}
           >
             {v.id !== socketId && chat[i - 1]?.id !== v?.id && (
-              <p className={styles.name}>{v.id?.slice(0, 8)}</p>
+              <p className={styles.name}>{v?.nickname}</p>
             )}
             <div
               className={
@@ -32,7 +32,7 @@ function Default() {
           </li>
         ) : v.data ? (
           <Character
-            id={v.id as string}
+            host={{ id: v.id as string, nickname: v.nickname as string }}
             key={`character${i + 1}`}
             data={v.data}
             shared={v.shared || false}
