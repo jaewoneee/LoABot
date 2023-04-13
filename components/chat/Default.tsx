@@ -6,13 +6,11 @@ import useChatStore from "@/store/useChat";
 
 function Default() {
   const { socketId } = useSocketStore();
-  const { chat } = useChatStore();
+  const { chat, nickname } = useChatStore();
 
   return (
     <ul>
-      {socketId && (
-        <li className={styles.notice}>{socketId?.slice(0, 8)}님 안녕하세요!</li>
-      )}
+      {socketId && <li className={styles.notice}>{nickname}님 안녕하세요!</li>}
       {chat.map((v, i) =>
         v?.msg ? (
           <li

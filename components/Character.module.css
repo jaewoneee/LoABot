@@ -32,7 +32,7 @@
 }
 
 .topper {
-  font-size: 14px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .topper p:last-child {
@@ -44,7 +44,7 @@
   margin-bottom: 0.5rem;
 }
 .bottom span {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 400;
 }
 .bottom p {
@@ -56,4 +56,5 @@
   pointer-events: none;
   background-color: var(--pale-gray) !important;
   opacity: 0.8;
+  color: var(--gray);
 }

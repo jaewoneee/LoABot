@@ -20,16 +20,16 @@ export default async (req: NextApiRequest, res: any) => {
         sendMessage(msg);
         socket.join(msg?.chatRoom);
       });
-      socket.on("chatroom", (data: PrivateRoomType) => {
+      socket.on("enter-chatroom", (data: PrivateRoomType) => {
         const { chatRoom } = data;
         socket.join(chatRoom);
         io.to(chatRoom).emit("private", data);
       });
-      socket.on("private-message", (data: PrivateMessage) => {
+      socket.on("send-private-message", (data: PrivateMessage) => {
         const { chatRoom } = data;
         io.to(chatRoom).emit("receive-private-message", data);
       });
-      socket.on("exit", (data: PrivateRoomType, id: string) => {
+      socket.on("exit-chatroom", (data: PrivateRoomType, id: string) => {
         const { chatRoom } = data;
         socket.leave(data.chatRoom);
         io.to(chatRoom).emit("leave-message", { ...data, leave: id });

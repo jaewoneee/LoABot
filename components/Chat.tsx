@@ -4,72 +4,46 @@ import { PROFILE } from "@/config/constants";
 import Tool from "./Tool";
 import { PrivateMessage, PrivateRoomType } from "@/types";
 import styles from "./Chat.module.css";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
+import EditIcon from "@mui/icons-material/Edit";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { scrollToBottom } from "@/utils/scrollEvent";
 import useChatStore from "@/store/useChat";
 import Default from "./chat/Default";
 import Private from "./chat/Private";
+import InputBox from "./chat/InputBox";
 
 function Chat() {
   const router = useRouter();
   const { query } = router;
   const { socket, socketId } = useSocketStore();
   const [msg, setMsg] = useState<string>("");
+  const [nicknameValue, setNicknamevalue] = useState<string>("");
+  const [isSearching, setSearching] = useState(false);
+  const [isOpened, setOpened] = useState(false);
+  const [isChanging, setChanging] = useState(false);
   const {
     chat,
+    nickname,
     privateChat,
     privateRoom,
     setPrivateRoom,
     setChatList,
     resetPrivateChat,
   } = useChatStore();
-  const [isSearching, setSearching] = useState(false);
-  const [isOpened, setOpened] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
 
-  const sendMessage = () => {
-    if (!isSearching && !privateRoom && msg) {
-      const message = {
-        id: socketId,
-        msg,
-      };
-      socket?.emit("send-message", message);
-    } else if (privateRoom) {
-      const privateMsg = { ...privateRoom, msg, sender: socketId };
-      socket?.emit("private-message", privateMsg);
-    } else {
-      fetchCharacterInfo();
-    }
-    setMsg("");
+  const changeNickname = () => {
+    localStorage.setItem("nickname", nicknameValue);
   };
 
-  const fetchCharacterInfo = async (type = PROFILE) => {
-    const url = `/api/loa/character?name=${msg}&type=${type}`;
-    const data = await fetch(url).then((res) => {
-      if (!res.ok) {
-        console.log("error!");
-      } else {
-        return res.json();
-      }
-    });
-
-    setSearching(false);
-    setOpened(false);
-    setChatList({ id: socketId as string, data });
-  };
-
-  const handleChangeEvent = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setMsg(value);
-  };
+  const handleChangeNickname = () => {};
 
   const leaveChatRoom = () => {
     router.replace("/");
-    socket?.emit("exit", privateRoom, socketId);
+    socket?.emit("exit  -chatroom", privateRoom, socketId);
     setPrivateRoom(null);
     resetPrivateChat();
   };
@@ -104,7 +78,7 @@ function Chat() {
   useEffect(() => {
     const timer = setTimeout(() => {
       scrollToBottom(bottom);
-    }, 100);
+    }, 10);
 
     return () => {
       clearTimeout(timer);
@@ -120,14 +94,22 @@ function Chat() {
               <ArrowBackIosRoundedIcon />
             </button>
           )}
-          <div>
+          <div
+            className={styles.nickname}
+            onClick={() => setChanging((state) => !state)}
+          >
             <Image
               src="/profile.png"
               width={50}
               height={50}
               alt="profile-image"
             />
-            <p>{socketId.slice(0, 8)}</p>
+            <div className={styles.nickname}>
+              <span>{nickname}</span>
+              <button aria-label="change nickname">
+                <EditIcon />
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -146,42 +128,7 @@ function Chat() {
         />
       )}
 
-      <div className={styles["input-box"]}>
-        {"id" in query === false && (
-          <button
-            onClick={() => setOpened((state) => !state)}
-            aria-label="open tool box"
-          >
-            <AddRoundedIcon />
-          </button>
-        )}
-
-        <div>
-          <input
-            type="text"
-            value={msg}
-            placeholder={
-              isSearching
-                ? "캐릭터명을 입력해 주세요"
-                : "메시지를 입력해 주세요"
-            }
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && msg.length > 0) {
-                sendMessage();
-                setMsg("");
-              }
-            }}
-            onChange={(e) => handleChangeEvent(e)}
-          />
-          <button
-            onClick={sendMessage}
-            aria-label="send message"
-            className={msg.length > 0 ? "" : styles.disabled}
-          >
-            <ArrowUpwardRoundedIcon />
-          </button>
-        </div>
-      </div>
+      <InputBox props={{ msg, setMsg, setOpened, setSearching, isSearching }} />
     </div>
   );
 }

@@ -33,7 +33,7 @@ function Character({
   const joinPrivateChatRoom = async (id: string) => {
     const chatRoom = `room-${id.slice(0, 4)}`;
     socket?.emit(
-      "chatroom",
+      "enter-chatroom",
       {
         host: id,
         guest: socketId,
@@ -57,7 +57,11 @@ function Character({
             }
           >
             {data?.CharacterImage && (
-              <img src={data.CharacterImage} alt="character-image" />
+              <img
+                src={data.CharacterImage}
+                alt="character-image"
+                style={{ aspectRatio: "1/1.25" }}
+              />
             )}
             <div>
               <div className={styles.topper}>
