@@ -8,7 +8,7 @@ const Index: React.FC = () => {
   const { socket, socketId, connect, disconnect } = useSocketStore();
   const { setNickname } = useChatStore();
 
-  useEffect((): any => {
+  useEffect(() => {
     console.log("socket connected");
     connect();
 
@@ -18,8 +18,13 @@ const Index: React.FC = () => {
     };
   }, []);
 
-  useEffect((): any => {
-    socketId && setNickname(socketId.slice(0, 6));
+  useEffect(() => {
+    const local = localStorage.getItem("nickname");
+    if (local) {
+      setNickname(local);
+    } else if (socketId) {
+      socketId && setNickname(socketId.slice(0, 6));
+    }
   }, [socketId]);
 
   return (

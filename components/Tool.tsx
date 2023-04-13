@@ -13,24 +13,24 @@ function Tool({
   props: {
     isSearching: boolean;
     setSearching: Dispatch<SetStateAction<boolean>>;
-    setOpened: Dispatch<SetStateAction<boolean>>;
+    setToolOpened: Dispatch<SetStateAction<boolean>>;
   };
 }) {
   const { setChatList } = useChatStore();
-  const { isSearching, setSearching, setOpened } = props;
+  const { isSearching, setSearching, setToolOpened } = props;
 
   const fetchNewsList = async (type: string) => {
     const url = `/api/loa/news?type=${type}`;
     const news = await fetch(url).then((res) => res.json());
 
     setChatList({ news });
-    setOpened(false);
+    setToolOpened(false);
   };
 
   const handleClick = () => {
     if (isSearching) {
       setSearching(false);
-      setOpened(false);
+      setToolOpened(false);
     } else {
       setSearching(true);
     }

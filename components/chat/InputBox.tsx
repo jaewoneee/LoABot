@@ -10,7 +10,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 interface InputBoxInterface {
   msg: string;
   setMsg: Dispatch<SetStateAction<string>>;
-  setOpened: Dispatch<SetStateAction<boolean>>;
+  setToolOpened: Dispatch<SetStateAction<boolean>>;
   setSearching: Dispatch<SetStateAction<boolean>>;
   isSearching: boolean;
 }
@@ -18,7 +18,7 @@ interface InputBoxInterface {
 function InputBox({ props }: { props: InputBoxInterface }) {
   const router = useRouter();
   const { query } = router;
-  const { msg, setMsg, setOpened, setSearching, isSearching } = props;
+  const { msg, setMsg, setToolOpened, setSearching, isSearching } = props;
   const { nickname, privateRoom, setChatList } = useChatStore();
   const { socket, socketId } = useSocketStore();
 
@@ -54,14 +54,14 @@ function InputBox({ props }: { props: InputBoxInterface }) {
     });
 
     setSearching(false);
-    setOpened(false);
+    setToolOpened(false);
     setChatList({ id: socketId as string, data });
   };
   return (
     <div className={styles["input-box"]}>
       {"id" in query === false && (
         <button
-          onClick={() => setOpened((state: boolean) => !state)}
+          onClick={() => setToolOpened((state: boolean) => !state)}
           aria-label="open tool box"
         >
           <AddRoundedIcon />

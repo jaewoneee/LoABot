@@ -14,16 +14,17 @@ import useChatStore from "@/store/useChat";
 import Default from "./chat/Default";
 import Private from "./chat/Private";
 import InputBox from "./chat/InputBox";
+import Modal from "./common/Modal";
+import useModalStore from "@/store/useModal";
 
 function Chat() {
   const router = useRouter();
   const { query } = router;
   const { socket, socketId } = useSocketStore();
+  const { isOpened, openModal } = useModalStore();
   const [msg, setMsg] = useState<string>("");
-  const [nicknameValue, setNicknamevalue] = useState<string>("");
   const [isSearching, setSearching] = useState(false);
-  const [isOpened, setOpened] = useState(false);
-  const [isChanging, setChanging] = useState(false);
+  const [isToolOpened, setToolOpened] = useState(false);
   const {
     chat,
     nickname,
@@ -35,15 +36,9 @@ function Chat() {
   } = useChatStore();
   const bottom = useRef<HTMLDivElement>(null);
 
-  const changeNickname = () => {
-    localStorage.setItem("nickname", nicknameValue);
-  };
-
-  const handleChangeNickname = () => {};
-
   const leaveChatRoom = () => {
     router.replace("/");
-    socket?.emit("exit  -chatroom", privateRoom, socketId);
+    socket?.emit("exit-chatroom", privateRoom, socketId);
     setPrivateRoom(null);
     resetPrivateChat();
   };
@@ -87,6 +82,7 @@ function Chat() {
 
   return (
     <div className={styles["chat-container"]}>
+      {isOpened && <Modal />}
       {socketId && (
         <div className={styles["info-box"]}>
           {"id" in query && (
@@ -94,10 +90,7 @@ function Chat() {
               <ArrowBackIosRoundedIcon />
             </button>
           )}
-          <div
-            className={styles.nickname}
-            onClick={() => setChanging((state) => !state)}
-          >
+          <div className={styles.nickname}>
             <Image
               src="/profile.png"
               width={50}
@@ -106,7 +99,10 @@ function Chat() {
             />
             <div className={styles.nickname}>
               <span>{nickname}</span>
-              <button aria-label="change nickname">
+              <button
+                aria-label="change nickname"
+                onClick={() => openModal("nickname")}
+              >
                 <EditIcon />
               </button>
             </div>
@@ -118,17 +114,19 @@ function Chat() {
         <div ref={bottom}></div>
       </div>
 
-      {"id" in query === false && isOpened && (
+      {"id" in query === false && isToolOpened && (
         <Tool
           props={{
             isSearching,
             setSearching,
-            setOpened,
+            setToolOpened,
           }}
         />
       )}
 
-      <InputBox props={{ msg, setMsg, setOpened, setSearching, isSearching }} />
+      <InputBox
+        props={{ msg, setMsg, setToolOpened, setSearching, isSearching }}
+      />
     </div>
   );
 }

@@ -1,0 +1,39 @@
+.modal-wrapper {
+  width: 100%;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nickname {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: #fff;
+}
+.nickname input {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--pale-gray);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nickname button {
+  width: 100%;
+  background-color: var(--green);
+  border-radius: 1rem;
+  padding: 0.5rem;
+}
+.nickname button:hover {
+  transition: 0.1s linear;
+  background-color: var(--light-green);
+}
