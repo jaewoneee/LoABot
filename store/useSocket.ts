@@ -17,9 +17,10 @@ const useSocketStore = create<SocketStoreInterface>((set, get) => ({
     const socketServer = io(SOCKET, {
       path: "/api/socket",
     });
-    socketServer.on("connect", () =>
-      set({ socket: socketServer, socketId: socketServer.id })
-    );
+    socketServer.on("connect", () => {
+      console.log("isConnected?", socketServer, SOCKET, socketServer.id);
+      set({ socket: socketServer, socketId: socketServer.id });
+    });
   },
   disconnect: () => {
     get().socket?.disconnect();
