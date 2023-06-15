@@ -3,6 +3,7 @@ import { PrivateMessage, PrivateRoomType } from "@/types/index";
 import { NextApiRequest } from "next";
 import { Server as ServerIO } from "socket.io";
 import { Server as NetServer } from "http";
+import { PrivateRoom, PublicRoom, LostArk } from "@/types/chat";
 
 export default async (req: NextApiRequest, res: any) => {
   if (!res.socket.server.io) {
@@ -12,36 +13,41 @@ export default async (req: NextApiRequest, res: any) => {
       path: "/api/socket",
     });
 
+    const sendMessage = (msg: any) => {
+      io.emit(PublicRoom.MSG, msg);
+    };
+
     io.on("connection", (socket) => {
-      socket.on("send-message", (msg) => {
+      // 메시지 보내기
+      socket.on(PublicRoom.SEND, (msg) => {
         sendMessage(msg);
       });
-      socket.on("character", (msg) => {
+      // 캐릭터 공유하기
+      socket.on(LostArk.CHA, (msg) => {
         sendMessage(msg);
         socket.join(msg?.chatRoom);
       });
-      socket.on("enter-chatroom", (data: PrivateRoomType) => {
+      // 일대일 채팅방 입장하기
+      socket.on(PrivateRoom.ENTER, (data: PrivateRoomType) => {
         const { chatRoom } = data;
         socket.join(chatRoom);
-        io.to(chatRoom).emit("private", data);
+        io.to(chatRoom).emit(PrivateRoom.SUCCESS, data);
       });
-      socket.on("send-private-message", (data: PrivateMessage) => {
+      // 일대일 채팅방 메시지 보내기
+      socket.on(PrivateRoom.SEND, (data: PrivateMessage) => {
         const { chatRoom } = data;
-        io.to(chatRoom).emit("receive-private-message", data);
+        io.to(chatRoom).emit(PrivateRoom.RECEIVE, data);
       });
+      // 일대일 채팅방 나가기
       socket.on(
-        "exit-chatroom",
+        PrivateRoom.EXIT,
         (data: PrivateRoomType, leave: { id: string; nickname: string }) => {
           const { chatRoom } = data;
           socket.leave(data.chatRoom);
-          io.to(chatRoom).emit("leave-message", { ...data, leave });
+          io.to(chatRoom).emit(PrivateRoom.NOTICE, { ...data, leave });
         }
       );
     });
-
-    const sendMessage = (msg: any) => {
-      io.emit("message", msg);
-    };
   }
   res.end();
 };

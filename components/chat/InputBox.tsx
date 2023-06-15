@@ -6,13 +6,14 @@ import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import styles from "../Chat.module.css";
 import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { PrivateRoom, PublicRoom } from "@/types/chat";
 
 interface InputBoxInterface {
   msg: string;
+  isSearching: boolean;
   setMsg: Dispatch<SetStateAction<string>>;
   setToolOpened: Dispatch<SetStateAction<boolean>>;
   setSearching: Dispatch<SetStateAction<boolean>>;
-  isSearching: boolean;
 }
 
 function InputBox({ props }: { props: InputBoxInterface }) {
@@ -34,10 +35,10 @@ function InputBox({ props }: { props: InputBoxInterface }) {
         nickname,
         msg,
       };
-      socket?.emit("send-message", message);
+      socket?.emit(PublicRoom.SEND, message);
     } else if (privateRoom) {
       const privateMsg = { ...privateRoom, msg, sender: socketId };
-      socket?.emit("send-private-message", privateMsg);
+      socket?.emit(PrivateRoom.SEND, privateMsg);
     } else {
       fetchCharacterInfo();
     }

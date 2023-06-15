@@ -6,6 +6,7 @@ import chat from "./chat/Common.module.css";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import useChatStore from "@/store/useChat";
+import { LostArk, PrivateRoom } from "@/types/chat";
 
 function Character({
   host,
@@ -29,14 +30,14 @@ function Character({
       shared: true,
       chatRoom: `room-${socketId!.slice(0, 4)}`,
     };
-    socket?.emit("character", message);
+    socket?.emit(LostArk.CHA, message);
     setShared(true);
   };
 
   const joinPrivateChatRoom = async () => {
     const chatRoom = `room-${host.id.slice(0, 4)}`;
     socket?.emit(
-      "enter-chatroom",
+      PrivateRoom.ENTER,
       {
         host,
         guest: { id: socketId, nickname },

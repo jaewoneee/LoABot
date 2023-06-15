@@ -16,6 +16,7 @@ import Private from "./chat/Private";
 import InputBox from "./chat/InputBox";
 import Modal from "./common/Modal";
 import useModalStore from "@/store/useModal";
+import { PrivateRoom, PublicRoom } from "@/types/chat";
 
 function Chat() {
   const router = useRouter();
@@ -38,27 +39,27 @@ function Chat() {
 
   const leaveChatRoom = () => {
     router.replace("/");
-    socket?.emit("exit-chatroom", privateRoom, { id: socketId, nickname });
+    socket?.emit(PrivateRoom.EXIT, privateRoom, { id: socketId, nickname });
     setPrivateRoom(null);
     resetPrivateChat();
   };
 
   useEffect(() => {
     // event listener
-    socket?.on("message", (message) => {
+    socket?.on(PublicRoom.MSG, (message) => {
       setChatList(message);
     });
 
-    socket?.on("private", (data: PrivateRoomType) => {
+    socket?.on(PrivateRoom.SUCCESS, (data: PrivateRoomType) => {
       setPrivateRoom(data);
       router.push(`?id=${data?.chatRoom}`);
     });
 
-    socket?.on("receive-private-message", (data: PrivateMessage) => {
+    socket?.on(PrivateRoom.RECEIVE, (data: PrivateMessage) => {
       setChatList(data);
     });
 
-    socket?.on("leave-message", (data) => {
+    socket?.on(PrivateRoom.NOTICE, (data) => {
       setChatList(data);
     });
   }, [socket]);
@@ -71,14 +72,8 @@ function Chat() {
   }, [isSearching]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToBottom(bottom);
-    }, 10);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [chat, privateChat]);
+    scrollToBottom(bottom);
+  }, [bottom, chat, privateChat]);
 
   return (
     <div className={styles["chat-container"]}>
@@ -111,7 +106,7 @@ function Chat() {
       )}
       <div className={styles.container}>
         {"id" in query ? <Private /> : <Default />}
-        <div ref={bottom}></div>
+        <div ref={bottom} />
       </div>
 
       {"id" in query === false && isToolOpened && (

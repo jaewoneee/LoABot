@@ -4,7 +4,7 @@ export const API_KEY = process.env.API_KEY as string;
 export const BASE_URL = process.env.BASE_URL as string;
 
 export const PROFILE = "profiles";
-export const EQIPMENT = "equipment";
+export const EQUIPMENT = "equipment";
 export const AVATAR = "avatars";
 export const COMBAT = "combat-skills";
 export const ENGRAVING = "engravings";
